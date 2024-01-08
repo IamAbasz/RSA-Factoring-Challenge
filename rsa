@@ -1,18 +1,38 @@
 #!/usr/bin/python3
 from sys import argv
 
-with open(argv[1]) as f:
-    for line in f:
-        num = int(line)
-        print("{:d}=".format(num), end='')
-        if num % 2 == 0:
-            print("{}*2".format(num//2))
-            continue
-        for i in range(3, num, 2):
-            if num % i == 0:
-                factor = num//i
-                for j in range(3, factor, 2):
-                    if factor % j == 0 or j == 0:
-                        break
-                    print("{}*{}".format(factor, i))
-                    break
+def factorize(num):
+    factors = []
+    # Check divisibility by 2
+    while num % 2 == 0:
+        factors.append(2)
+        num = num // 2
+
+    # Check divisibility by odd numbers
+    for i in range(3, int(num**0.5) + 1, 2):
+        while num % i == 0:
+            factors.append(i)
+            num = num // i
+
+    # If the remaining number is a prime greater than 2
+    if num > 2:
+        factors.append(num)
+
+    return factors
+
+def main():
+    if len(argv) != 2:
+        print("Usage: ./factors <file>")
+        return
+
+    filename = argv[1]
+
+    with open(filename) as f:
+        for line in f:
+            num = int(line.strip())
+            factors = factorize(num)
+            print(f"{num}={'*'.join(map(str, factors))}")
+
+if __name__ == "__main__":
+    main()
+
